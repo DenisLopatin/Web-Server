@@ -5,8 +5,13 @@ You will need docker and docker-compose.
 __Server include__:
 
 * Nginx
-* Php-fpm
-* MySQL
+  * php-fpm
+  * php-cli
+  * git
+  * nodejs
+  * npm
+* Database
+  * MySQL
 * PhpMyAdmin
 
 ### Getting Start

@@ -1,31 +1,23 @@
 version: "3"
 
 services:
-  php-fpm:
-    build:
-      context: ./config/php-fpm
-      dockerfile: Dockerfile
-    container_name: php
-    networks:
-      - common
-    restart: always
   nginx:
     build:
       context: ./config/nginx
       dockerfile: Dockerfile
-    container_name: www
+    container_name: app
     ports:
       - "80:80"
     volumes:
       - ./www:/usr/share/nginx/html
+      - ./config/nginx/php-cli/php.ini:/etc/php/8.2/cli/php.ini
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/php-fpm/www.conf:/etc/php/8.2/fpm/pool.d/www.conf
       - ./config/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - common
       - database
     restart: always
-    depends_on:
-      - php-fpm
   mysql:
     build:
       context: ./config/mysql
@@ -42,11 +34,11 @@ services:
       MYSQL_ROOT_PASSWORD: 1009
     depends_on:
       - nginx
-  adminer:
+  phpmyadmin:
     build:
       context: ./config/phpmyadmin
       dockerfile: Dockerfile
-    container_name: phpmyadmin
+    container_name: adminer
     networks:
       - database
     restart: always
