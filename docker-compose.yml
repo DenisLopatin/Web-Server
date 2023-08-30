@@ -24,6 +24,9 @@ services:
     container_name: mariadb
     ports:
       - "3306:3306"
+    volumes:
+      - ./config/mysql/mariadb.cnf:/etc/mysql/mariadb.cnf
+      - ./config/mysql/database/:/docker-entrypoint-initdb.d/
     networks:
       - app
       - database
