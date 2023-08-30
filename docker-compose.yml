@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 services:
   nginx:
@@ -15,29 +15,24 @@ services:
       - ./config/nginx/php-fpm/www.conf:/etc/php/8.2/fpm/pool.d/www.conf
       - ./config/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
-      - common
+      - app
       - database
     restart: always
-  mysql:
-    build:
-      context: ./config/mysql
-      dockerfile: Dockerfile
-    container_name: database
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
     ports:
       - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
     networks:
-      - common
+      - app
       - database
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 1009
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     depends_on:
       - nginx
   phpmyadmin:
-    build:
-      context: ./config/phpmyadmin
-      dockerfile: Dockerfile
+    image: phpmyadmin:latest
     container_name: adminer
     networks:
       - database
@@ -46,13 +41,13 @@ services:
       - "3000:80"
     environment:
       PMA_ARBITRARY: 1
-      PMA_HOST: mysql
+      PMA_HOST: mariadb
       PMA_PORT: 3306
     depends_on:
-      - mysql
+      - mariadb
 
 networks:
-  common:
+  app:
     driver: bridge
   database:
     driver: bridge
