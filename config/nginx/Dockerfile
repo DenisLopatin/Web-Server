@@ -9,6 +9,7 @@ RUN apt install -y iputils-ping \
     php8.2-fpm \
     php8.2-xml \
     php8.2-curl \
+    php8.2-mysql \
     nano \
     net-tools
 CMD ["/bin/bash", "-c", "service php8.2-fpm start && chmod 755 /usr/share/nginx/html/* && nginx -g 'daemon off;'"]
