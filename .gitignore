@@ -3,5 +3,5 @@ www/*
 !www/localhost/
 config/nginx/conf.d/*
 !config/nginx/conf.d/default.conf
-config/mysql/database/*
-!config/mysql/database/README.md
+config/mariadb/database/*
+!config/mariadb/database/README.md
