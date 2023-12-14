@@ -11,7 +11,7 @@ __Server include__:
   * nodejs
   * npm
 * Database
-  * MySQL
+  * MariaDB
 * PhpMyAdmin
 
 ### Getting Start
@@ -23,7 +23,7 @@ nginx configuration file for it in `config/nginx/conf.d` as
 ### Ports
 
 - 80: Nginx
-- 443 Nginx
+- 443: Nginx
 - 3306: MariaDB
 - 3000: PHPMyAdmin
 
@@ -35,6 +35,70 @@ nginx configuration file for it in `config/nginx/conf.d` as
 - database
   - mariadb
   - phpmyadmin
+
+### Configuring Hosts
+
+Open the hosts file and add the aliases for 127.0.0.1:
+
+    127.0.0.1 your_domain.com
+    127.0.0.1 subdomain.your_domain.com
+
+In most cases, it will be accessible via the following path:
+
+`C:\Windows\System32\drivers\etc` for Windows
+
+`/etc/hosts` for Linux
+
+`/private/etc/hosts` for macOS
+
+### Configuring Nginx
+
+The Nginx config is located in `config/nginx/conf.d`. You can continue to 
+work with the default config or create a new one based on the domain name
+that you assigned alias to in the host file. 
+
+For example, for a domain `your_domain.com` you need to create 
+`your_domain.conf` file in the directory `config/nginx/conf.d`.
+
+### Database import
+
+Take a dump of your database and put it in the directory `config/mariadb/databases/`.
+Each time the container is started, all sql files will be imported into 
+the container. 
+
+### Configuring SSL
+
+Log into the container: `docker exec -it 3ae77a23d951 bash`. 
+Here `3ae77a23d951` is the container ID printed by docker ps. 
+You probably have another one, replace it.
+
+In the container, run the commands:
+
+    cd /etc/nginx
+    mkdir certs
+    cd certs
+    openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
+
+The last command will ask you five questions about certificate identification,
+generate a 2048-bit RSA key in the `/etc/nginx/certs/server.key` file and 
+the certificate in the `/etc/nginx/certs/server.crt` file. The validity 
+period of the certificate is 365 days, the key is without a password.
+
+This will have to be done once, and on subsequent launches you will copy 
+them from your file system to the container.
+
+Edit your server settings. In the example below, the default server 
+settings are edited:
+
+    server {
+        listen       80;
+        listen  [::]:80;
+        listen  443 ssl; # +
+    
+        ssl_certificate     /etc/nginx/certs/server.crt; # +
+        ssl_certificate_key /etc/nginx/certs/server.key; # +
+        ssl_verify_client off; # +
+        ... # the rest is at your discretion according to the nginx settings
 
 ### Pay attention
 

@@ -3,5 +3,6 @@ www/*
 !www/localhost/
 config/nginx/conf.d/*
 !config/nginx/conf.d/default.conf
-config/mariadb/database/*
+config/nginx/certs/
+config/mariadb/databases/*
 !config/mariadb/database/README.md

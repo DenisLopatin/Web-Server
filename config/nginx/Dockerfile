@@ -1,9 +1,10 @@
 FROM nginx:latest
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-RUN apt update && apt upgrade
-RUN apt install -y iputils-ping \
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y iputils-ping \
     git \
-    nodejs  \
+    nodejs \
     npm \
     php8.2 \
     php8.2-fpm \
@@ -13,4 +14,4 @@ RUN apt install -y iputils-ping \
     php8.2-mysqli \
     nano \
     net-tools
-CMD ["/bin/bash", "-c", "service php8.2-fpm start && chmod 755 /usr/share/nginx/html/* && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "service php8.2-fpm start && chown www-data:www-data /usr/share/nginx/html/ -R && chmod g+w /usr/share/nginx/html/ -R && nginx -g 'daemon off;'"]

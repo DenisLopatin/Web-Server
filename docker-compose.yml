@@ -8,6 +8,7 @@ services:
     container_name: app
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./www:/usr/share/nginx/html
       - ./config/nginx/php-cli/php.ini:/etc/php/8.2/cli/php.ini
@@ -15,6 +16,7 @@ services:
       - ./config/nginx/php-fpm/www.conf:/etc/php/8.2/fpm/pool.d/www.conf
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./config/nginx/certs/:/etc/nginx/certs/
     networks:
       - app
       - database
@@ -26,7 +28,7 @@ services:
       - "3306:3306"
     volumes:
       - ./config/mariadb/mariadb.cnf:/etc/mysql/mariadb.cnf
-      - ./config/mariadb/database/:/docker-entrypoint-initdb.d/
+      - ./config/mariadb/databases/:/docker-entrypoint-initdb.d/
     networks:
       - app
       - database
