@@ -7,11 +7,7 @@ RUN apt-get install -y iputils-ping \
     nodejs \
     npm \
     php8.2 \
-    php8.2-fpm \
-    php8.2-xml \
-    php8.2-curl \
-    php8.2-mysql \
-    php8.2-mysqli \
+    php8.2-cli \
     nano \
     net-tools
-CMD ["/bin/bash", "-c", "service php8.2-fpm start && chown www-data:www-data /usr/share/nginx/html/ -R && chmod g+w /usr/share/nginx/html/ -R && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "chown www-data:www-data /usr/share/nginx/html/ -R && chmod g+w /usr/share/nginx/html/ -R && nginx -g 'daemon off;'"]

@@ -5,14 +5,18 @@ You will need docker and docker-compose.
 __Server include__:
 
 * Nginx
-  * php-fpm
   * php-cli
   * git
   * nodejs
   * npm
 * Database
   * MariaDB
-* PhpMyAdmin
+    * PhpMyAdmin
+  * PostgreSQL
+    * PGAdmin
+* PHP-fpm
+  * PHP7.4
+  * PHP8.3
 
 ### Getting Start
 
@@ -22,18 +26,24 @@ nginx configuration file for it in `config/nginx/conf.d` as
 
 ### Ports
 
-- 80: Nginx
-- 443: Nginx
-- 3306: MariaDB
-- 3000: PHPMyAdmin
+    80: Nginx
+    443: Nginx
+    3000: PhpMyAdmin
+    4000: PGAdmin
 
 ### Networks
 
 - app
   - nginx
   - mariadb
+  - pgadmin4
+  - php7.4-fpm
+  - php8.3-fpm
 - database
+  - nginx
   - mariadb
+  - postgresql
+  - pgadmin4
   - phpmyadmin
 
 ### Configuring Hosts
@@ -59,6 +69,15 @@ that you assigned alias to in the host file.
 
 For example, for a domain `your_domain.com` you need to create 
 `your_domain.conf` file in the directory `config/nginx/conf.d`.
+
+For PHP sites, you need to enable the following settings in the nginx config:
+
+    location ~ \.php$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass php{version|service}-fpm:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
 
 ### Database import
 
@@ -103,7 +122,18 @@ settings are edited:
 ### Pay attention
 
 For applications that will connect to the database, you need to set 
-the `host` as `mariadb`. not `localhost` or `127.0.0.1`. 
+the `host` as `mariadb` or `postgres` by `container_name`, 
+not `localhost` or `127.0.0.1`.
 
-The configuration files for `php-cli` are located in the `config/nginx/php-cli`
-directory, for `php-fpm` in the directory `config/nginx/php-fpm`.
+The configuration files for all services are located in the `config` folder.
+
+Sometimes the Nginx server may be unavailable after the container is built.
+You need to go into the container and execute the following commands:
+
+    service nginx status
+    service nginx -t
+    service nginx restart
+
+### TODO
+
+`config/postgresql/postgresql.conf` not included in the container.

@@ -1,26 +1,20 @@
 version: "3.1"
 
 services:
-  nginx:
-    build:
-      context: ./config/nginx
-      dockerfile: Dockerfile
-    container_name: app
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./www:/usr/share/nginx/html
-      - ./config/nginx/php-cli/php.ini:/etc/php/8.2/cli/php.ini
-      - ./config/nginx/php-fpm/php.ini:/etc/php/8.2/fpm/php.ini
-      - ./config/nginx/php-fpm/www.conf:/etc/php/8.2/fpm/pool.d/www.conf
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./config/nginx/conf.d/:/etc/nginx/conf.d/
-      - ./config/nginx/certs/:/etc/nginx/certs/
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: mariadb-adminer
     networks:
-      - app
       - database
     restart: always
+    ports:
+      - "3000:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+    depends_on:
+      - mariadb
   mariadb:
     image: mariadb:latest
     container_name: mariadb
@@ -37,20 +31,83 @@ services:
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     depends_on:
       - nginx
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: adminer
+  pgadmin4:
+    image: elestio/pgadmin:latest
+    container_name: postgresql-adminer
     networks:
+      - app
       - database
     restart: always
-    ports:
-      - "3000:80"
     environment:
-      PMA_ARBITRARY: 1
-      PMA_HOST: mariadb
-      PMA_PORT: 3306
+      PGADMIN_DEFAULT_EMAIL: root@example.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "4000:8080"
     depends_on:
-      - mariadb
+      - postgresql
+  postgresql:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./config/postgresql/databases/:/docker-entrypoint-initdb.d/
+    networks:
+      - app
+      - database
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=root
+    depends_on:
+      - nginx
+  nginx:
+    build:
+      context: ./config/nginx
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./www:/usr/share/nginx/html
+      - ./config/nginx/php-cli/php.ini:/etc/php/8.3/cli/php.ini
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./config/nginx/certs/:/etc/nginx/certs/
+    networks:
+      - app
+      - database
+    restart: always
+    depends_on:
+      - php8.3-fpm
+      - php7.4-fpm
+  php7.4-fpm:
+    build:
+      context: ./config/php-fpm/7.4
+      dockerfile: Dockerfile
+    container_name: fpm-7.4
+    ports:
+      - ":9000"
+    volumes:
+      - ./www:/usr/share/nginx/html
+      - ./config/php-fpm/7.4/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    networks:
+      - app
+    restart: always
+  php8.3-fpm:
+    build:
+      context: ./config/php-fpm/8.3
+      dockerfile: Dockerfile
+    container_name: fpm-8.3
+    ports:
+      - ":9000"
+    volumes:
+      - ./www:/usr/share/nginx/html
+      - ./config/php-fpm/8.3/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    networks:
+      - app
+    restart: always
 
 networks:
   app:

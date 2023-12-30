@@ -6,3 +6,5 @@ config/nginx/conf.d/*
 config/nginx/certs/
 config/mariadb/databases/*
 !config/mariadb/database/README.md
+config/postgresql/databases/*
+!config/postgresql/database/README.md
