@@ -134,6 +134,13 @@ You need to go into the container and execute the following commands:
     service nginx -t
     service nginx restart
 
+In some cases, you will need to change the file access rights that were 
+created by the www-data (Nginx) user. To do this, go into the container 
+and execute the following commands, for example, for laravel:
+
+    chmod -R 777 vendor -R
+    chmod -R 777 composer.lock
+
 ### TODO
 
 `config/postgresql/postgresql.conf` not included in the container.
