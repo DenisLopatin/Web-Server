@@ -10,4 +10,4 @@ RUN apt-get install -y iputils-ping \
     php8.2-cli \
     nano \
     net-tools
-CMD ["/bin/bash", "-c", "chown www-data:www-data /usr/share/nginx/html/ -R && chmod g+w /usr/share/nginx/html/ -R && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "chown www-data:www-data /usr/share/nginx/html/ -R && chmod 777 /usr/share/nginx/html/ -R && nginx -g 'daemon off;'"]
