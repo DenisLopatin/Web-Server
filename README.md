@@ -135,11 +135,22 @@ You need to go into the container and execute the following commands:
     service nginx restart
 
 In some cases, you will need to change the file access rights that were 
-created by the www-data (Nginx) user. To do this, go into the container 
-and execute the following commands, for example, for laravel:
+created by the www-data (Nginx) user. To do this execute the following 
+commands, for example, for laravel:
 
     chmod -R 777 vendor -R
     chmod -R 777 composer.lock
+
+If you have an application installed on your device, for example, MySQL,
+you should run the following command to connect to mysql in a docker 
+container, not on your device:
+
+    mysql -uroot -h localhost -P 3306
+    mysql -uroot -h 127.0.0.1 -P 3306
+
+To connect to postgresql inside the container, use the following command:
+
+    psql -h localhost -p 5432 -U postgres --password
 
 ### TODO
 
