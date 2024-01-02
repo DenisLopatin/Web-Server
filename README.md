@@ -152,6 +152,11 @@ To connect to postgresql inside the container, use the following command:
 
     psql -h localhost -p 5432 -U postgres --password
 
+At the same time, you need to install the client versions of the DBMS:
+
+    apt install postgresql-client
+    apt install mysql-client
+
 ### TODO
 
 `config/postgresql/postgresql.conf` not included in the container.
