@@ -9,7 +9,9 @@ __Server include__:
   * git
   * nodejs
   * npm
-* Database
+* Databases
+  * MySQL
+    * PhpMyAdmin
   * MariaDB
     * PhpMyAdmin
   * PostgreSQL
@@ -28,19 +30,25 @@ nginx configuration file for it in `config/nginx/conf.d` as
 
     80: Nginx
     443: Nginx
-    3000: PhpMyAdmin
-    4000: PGAdmin
+    3306: MySQL
+    33060: MariaDB
+    5432: Postgresql
+    3000: PhpMyAdmin for MySQL
+    3000: PhpMyAdmin for MariaDB
+    5000: PGAdmin for Postgresql
 
 ### Networks
 
 - app
   - nginx
+  - mysql
   - mariadb
   - pgadmin4
   - php7.4-fpm
   - php8.3-fpm
 - database
   - nginx
+  - mysql
   - mariadb
   - postgresql
   - pgadmin4
@@ -81,7 +89,7 @@ For PHP sites, you need to enable the following settings in the nginx config:
 
 ### Database import
 
-Take a dump of your database and put it in the directory `config/mariadb/databases/`.
+Take a dump of your database and put it in the directory `config/[db_driver]/databases/`.
 Each time the container is started, all sql files will be imported into 
 the container. 
 
@@ -122,7 +130,7 @@ settings are edited:
 ### Pay attention
 
 For applications that will connect to the database, you need to set 
-the `host` as `mariadb` or `postgres` by `container_name`, 
+the `host` as `mysql|mariadb|postgres` by `container_name`, 
 not `localhost` or `127.0.0.1`.
 
 The configuration files for all services are located in the `config` folder.
@@ -140,6 +148,11 @@ commands, for example, for laravel:
 
     chmod -R 777 vendor -R
     chmod -R 777 composer.lock
+
+You may need to run the following command to undo changes in the version 
+control system:
+
+    git config core.fileMode false
 
 If you have an application installed on your device, for example, MySQL,
 you should run the following command to connect to mysql in a docker 
