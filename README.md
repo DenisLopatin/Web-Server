@@ -34,7 +34,7 @@ nginx configuration file for it in `config/nginx/conf.d` as
     33060: MariaDB
     5432: Postgresql
     3000: PhpMyAdmin for MySQL
-    3000: PhpMyAdmin for MariaDB
+    4000: PhpMyAdmin for MariaDB
     5000: PGAdmin for Postgresql
 
 ### Networks
@@ -53,6 +53,10 @@ nginx configuration file for it in `config/nginx/conf.d` as
   - postgresql
   - pgadmin4
   - phpmyadmin
+
+### Getting Start
+
+Below is a step-by-step guide for launching websites in development mode.
 
 ### Configuring Hosts
 
@@ -87,16 +91,16 @@ For PHP sites, you need to enable the following settings in the nginx config:
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 
-### Database import
+You can view the standard Nginx setup for a specific project. 
+For example, for [WordPress](https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/) 
+or for [Laravel](https://laravel.com/docs/10.x/deployment#nginx).
 
-Take a dump of your database and put it in the directory `config/[db_driver]/databases/`.
-Each time the container is started, all sql files will be imported into 
-the container. 
+the `fastcgi_pass' parameter should be called by the name of the `php-fpm` container.
 
 ### Configuring SSL
 
-Log into the container: `docker exec -it 3ae77a23d951 bash`. 
-Here `3ae77a23d951` is the container ID printed by docker ps. 
+Log into the container: `docker exec -it 3ae77a23d951 bash`.
+Here `3ae77a23d951` is the container ID printed by `docker ps` command.
 You probably have another one, replace it.
 
 In the container, run the commands:
@@ -107,14 +111,14 @@ In the container, run the commands:
     openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
 
 The last command will ask you five questions about certificate identification,
-generate a 2048-bit RSA key in the `/etc/nginx/certs/server.key` file and 
-the certificate in the `/etc/nginx/certs/server.crt` file. The validity 
+generate a 2048-bit RSA key in the `/etc/nginx/certs/server.key` file and
+the certificate in the `/etc/nginx/certs/server.crt` file. The validity
 period of the certificate is 365 days, the key is without a password.
 
-This will have to be done once, and on subsequent launches you will copy 
+This will have to be done once, and on subsequent launches you will copy
 them from your file system to the container.
 
-Edit your server settings. In the example below, the default server 
+Edit your server settings. In the example below, the default server
 settings are edited:
 
     server {
@@ -126,6 +130,15 @@ settings are edited:
         ssl_certificate_key /etc/nginx/certs/server.key; # +
         ssl_verify_client off; # +
         ... # the rest is at your discretion according to the nginx settings
+
+### Database import
+
+Take a dump of your database and put it in the directory `config/[db]/databases/`.
+Each time the container is started, all sql files will be imported into 
+the container. 
+
+Therefore, if you need to save the changes, you need to dump the database
+and put it in the directory `config/[db]/databases/`.
 
 ### Pay attention
 
