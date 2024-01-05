@@ -146,7 +146,31 @@ For applications that will connect to the database, you need to set
 the `host` as `mysql|mariadb|postgres` by `container_name`, 
 not `localhost` or `127.0.0.1`.
 
+When accessing a resource through a web browser, the connection to the 
+database service will be performed by an internal service in docker, 
+such as `php-fpm`. If you need to execute a command from the terminal, 
+then the `mysql` service installed locally will no longer know about 
+the `mariadb:3306` server, for the local host it will be `127.0.0.1:33060`.
+
+Therefore, in some cases, when launching the program through the terminal,
+you need to go into the application configuration and change the data, 
+for example:
+
+    DB_CONNECTION=mysql
+    DB_HOST=mariadb
+    DB_PORT=3306
+
+replace with:
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=33060
+
+---
+
 The configuration files for all services are located in the `config` folder.
+
+---
 
 Sometimes the Nginx server may be unavailable after the container is built.
 You need to go into the container and execute the following commands:
@@ -154,6 +178,8 @@ You need to go into the container and execute the following commands:
     service nginx status
     service nginx -t
     service nginx restart
+
+---
 
 In some cases, you will need to change the file access rights that were 
 created by the www-data (Nginx) user. To do this execute the following 
@@ -166,6 +192,8 @@ You may need to run the following command to undo changes in the version
 control system:
 
     git config core.fileMode false
+
+---
 
 If you have an application installed on your device, for example, MySQL,
 you should run the following command to connect to mysql in a docker 
