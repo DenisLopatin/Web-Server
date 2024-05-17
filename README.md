@@ -214,3 +214,11 @@ At the same time, you need to install the client versions of the DBMS:
 ### TODO
 
 `config/postgresql/postgresql.conf` not included in the container.
+
+Add to nginx config:
+
+    fastcgi_buffers         16  16k;
+    fastcgi_buffer_size         32k;
+    proxy_buffer_size          128k;
+    proxy_buffers            4 256k;
+    proxy_busy_buffers_size    256k;
