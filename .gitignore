@@ -1,11 +1,3 @@
 .idea
 www/*
 !www/localhost/
-config/nginx/conf.d/*
-!config/nginx/conf.d/default.conf
-config/mysql/databases/*
-!config/mysql/database/README.md
-config/mariadb/databases/*
-!config/mariadb/database/README.md
-config/postgresql/databases/*
-!config/postgresql/database/README.md
